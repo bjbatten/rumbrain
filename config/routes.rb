@@ -7,4 +7,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  post "/worlds", to: "worlds#create"
+  get "/worlds/:id/state", to: "worlds#state"
+  post "/worlds/:id/act", to: "worlds#act"
 end
