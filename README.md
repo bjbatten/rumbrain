@@ -1,24 +1,13 @@
-# README
+# Monkeymind
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Funny, agent-flavored text adventure.
 
-Things you may want to cover:
+## Apps
+- **rumbrain/** – Rails 8 API (Postgres, UUID). Endpoints: `/worlds`, `/worlds/:id/state`, `/worlds/:id/act`, (soon) `/worlds/:id/npc/:npc_id/speak`.
+- **docs/** – OpenAPI + `GameState` JSON Schema.
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## Dev
+```bash
+cd rumbrain
+bin/rails db:create db:migrate
+bundle exec rspec
