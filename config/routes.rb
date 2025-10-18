@@ -11,4 +11,5 @@ Rails.application.routes.draw do
   post "/worlds", to: "worlds#create"
   get "/worlds/:id/state", to: "worlds#state"
   post "/worlds/:id/act", to: "worlds#act"
+  post "/worlds/:id/npc/:npc_id/speak", to: "worlds#speak"
 end

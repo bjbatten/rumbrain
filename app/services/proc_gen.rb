@@ -20,10 +20,11 @@ class ProcGen
       }
     end
 
-    # Sprinkle two item IDs deterministically
+    # Ensure at least 2 items are placed in distinct rooms
     item_ids = %w[item_1 item_2]
-    item_ids.each do |iid|
-      target = room_ids[rng.rand(room_ids.size)]
+    selected_rooms = room_ids.sample(2, random: rng)
+    item_ids.each_with_index do |iid, idx|
+      target = selected_rooms[idx]
       rooms[target]["items"] << iid
     end
 
