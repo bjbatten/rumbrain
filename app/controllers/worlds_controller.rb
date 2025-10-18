@@ -48,6 +48,27 @@ class WorldsController < ApplicationController
     render json: { error: "Unexpected error: #{e.message}" }, status: 500
   end
 
+  def resume
+    code = params[:code].to_s.strip
+    world = World.find_by(save_code: code)
+    if world
+      render json: WorldSerializer.render(world, messages: [ "World resumed." ]), status: :ok
+    else
+      render json: { error: "not found" }, status: :not_found
+    end
+  end
+
+  def resume_link
+    code = params[:code].to_s.strip.downcase
+    world = World.find_by(save_code: code)
+    if world
+      render json: WorldSerializer.render(world, messages: [ "World resumed via link." ]), status: :ok
+    else
+      render json: { error: "not found" }, status: :not_found
+    end
+  end
+
+
   def speak
     world = World.find(params[:id])
     npc_id = params[:npc_id]

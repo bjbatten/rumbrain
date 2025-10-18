@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_10_16_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_18_231221) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -31,6 +31,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_10_16_000001) do
     t.jsonb "game_state", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "save_code"
+    t.index ["save_code"], name: "index_worlds_on_save_code", unique: true
     t.index ["seed"], name: "index_worlds_on_seed"
   end
 
