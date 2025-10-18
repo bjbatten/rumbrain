@@ -3,7 +3,7 @@
 require "rails_helper"
 require "json_schemer"
 
-def schema_path(name); File.expand_path("../../../docs/schemas/#{name}.schema.json", __dir__); end
+def schema_path(name); Rails.root.join("docs", "schemas", "#{name}.schema.json"); end
 def load_schema(name); JSONSchemer.schema(Pathname.new(schema_path(name))); end
 def expect_json_schema!(payload, schema_name)
   errors = load_schema(schema_name).validate(payload).to_a

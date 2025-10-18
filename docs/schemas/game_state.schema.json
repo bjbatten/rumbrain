@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Game State Schema",
+  "description": "Schema for the game state object in rumbrain",
+  "required": ["player", "rooms", "npcs", "log"],
+  "properties": {
+    "player": {
+      "type": "object",
+      "required": ["room_id", "inventory", "flags"],
+      "properties": {
+        "room_id": {
+          "type": "string",
+          "pattern": "^room_\\d+$"
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "flags": {
+          "type": "object"
+        }
+      }
+    },
+    "rooms": {
+      "type": "object",
+      "patternProperties": {
+        "^room_\\d+$": {
+          "type": "object",
+          "required": ["desc", "exits"],
+          "properties": {
+            "desc": {
+              "type": "string"
+            },
+            "exits": {
+              "type": "object",
+              "properties": {
+                "next": {
+                  "type": "string",
+                  "pattern": "^room_\\d+$"
+                }
+              }
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "npcs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "npcs": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z_]+$": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "pattern": "^room_\\d+$"
+            },
+            "mood": {
+              "type": "string"
+            },
+            "flags": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "log": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

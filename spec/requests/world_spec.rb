@@ -5,10 +5,9 @@ require "json_schemer"
 
 # ---------------------------------------------------------------------------
 # JSON schema helper
-# Adjust path to reach repo-root /docs from rumbrain/spec/requests
 # ---------------------------------------------------------------------------
 def schema_path(name)
-  File.expand_path("../../../docs/schemas/#{name}.schema.json", __dir__)
+  Rails.root.join("docs", "schemas", "#{name}.schema.json")
 end
 
 def load_schema(name)
