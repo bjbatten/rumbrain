@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-def schema_path(name); Rails.root.join("docs", "schemas", "#{name}.schema.json"); end
 require "json_schemer"
 
 RSpec.describe "Worlds /act", type: :request do

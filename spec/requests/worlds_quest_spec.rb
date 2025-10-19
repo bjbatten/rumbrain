@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-def schema_path(name) = Rails.root.join("docs", "schemas", "game_state.schema.json")
 require "json_schemer"
 
 RSpec.describe "Worlds quest flags", type: :request do

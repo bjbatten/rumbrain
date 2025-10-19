@@ -27,11 +27,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_18_231221) do
 
   create_table "worlds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "seed"
-    t.string "difficulty"
+    t.string "difficulty", default: "normal", null: false
     t.jsonb "game_state", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "save_code"
+    t.string "save_code", null: false
     t.index ["save_code"], name: "index_worlds_on_save_code", unique: true
     t.index ["seed"], name: "index_worlds_on_seed"
   end
