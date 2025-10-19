@@ -1,4 +1,5 @@
 class WorldsController < ApplicationController
+  ALLOWED_ACTIONS = %w[move look pickup inventory use].freeze
   def create
     seed = params[:seed]
     difficulty = params[:difficulty] || "normal"
@@ -31,10 +32,10 @@ class WorldsController < ApplicationController
     game_action = permitted_params[:game_action]
     payload = permitted_params[:payload] || {}
 
-  unless %w[move look pickup inventory use].include?(game_action)
+    unless ALLOWED_ACTIONS.include?(game_action)
       render json: { error: "invalid action" }, status: 400
       return
-  end
+    end
 
     new_state, messages = WorldAction.apply!(world: world, action: game_action, payload: payload)
     world.update!(game_state: new_state)
