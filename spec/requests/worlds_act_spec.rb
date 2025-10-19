@@ -22,7 +22,7 @@ RSpec.describe "Worlds /act", type: :request do
     expect(response).to have_http_status(:ok)
     expect(json).to include("world_id", "state", "messages")
     expect(json["state"]["player"]["room_id"]).to eq(next_room)
-  expect_json_schema!(json["state"])
+  expect_json_schema!(json["state"], "game_state")
   end
 
   it "returns info about the current room (POST /act look)" do
@@ -34,7 +34,7 @@ RSpec.describe "Worlds /act", type: :request do
     post "/worlds/#{wid}/act", params: { game_action: "look", payload: {} }
     expect(response).to have_http_status(:ok)
     expect(json["messages"].join(" ")).to include(desc)
-  expect_json_schema!(json["state"])
+  expect_json_schema!(json["state"], "game_state")
   end
 
   it "picks up an item present in the room (POST /act pickup)" do
@@ -68,7 +68,7 @@ RSpec.describe "Worlds /act", type: :request do
     new_state = json["state"]
     expect(new_state["player"]["inventory"]).to include(item)
     expect(new_state["rooms"][room_with_item]["items"]).not_to include(item)
-  expect_json_schema!(new_state)
+  expect_json_schema!(new_state, "game_state")
   end
 
   it "rejects invalid move direction" do

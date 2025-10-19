@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get "/worlds/resume", to: "worlds#resume"
   get "/worlds/:id/state", to: "worlds#state"
   post "/worlds/:id/act", to: "worlds#act"
+  get  "/worlds/:id/scene", to: "worlds#scene"
   post "/worlds/:id/npc/:npc_id/speak", to: "worlds#speak"
   get  "/worlds/resume",      to: "worlds#resume"       # keeps existing query version
   get  "/resume/:code",       to: "worlds#resume_link", as: :resume_link

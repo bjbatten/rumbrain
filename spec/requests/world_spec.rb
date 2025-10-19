@@ -32,7 +32,7 @@ RSpec.describe "Worlds", type: :request do
 
       game_state = json["state"]
       expect_game_state_shape!(game_state)
-  expect_json_schema!(game_state)
+  expect_json_schema!(game_state, "game_state")
     end
   end
 
@@ -45,7 +45,7 @@ RSpec.describe "Worlds", type: :request do
       expect(response).to have_http_status(:ok)
       expect_world_response!(json)
       expect(json["world_id"]).to eq(world_id)
-  expect_json_schema!(json["state"])
+  expect_json_schema!(json["state"], "game_state")
     end
   end
 

@@ -1,93 +1,154 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
   "title": "Game State Schema",
   "description": "Schema for the game state object in rumbrain",
   "required": ["player", "rooms", "npcs", "log"],
   "properties": {
-  "player": {
-      "type": "object",
-      "required": ["room_id", "inventory", "flags"],
-      "properties": {
-        "room_id": {
-          "type": "string",
-          "pattern": "^room_\\d+$"
-        },
-        "inventory": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "flags": {
-          "type": "object"
-        }
-      }
-    },
-    "rooms": {
-      "type": "object",
-      "patternProperties": {
-        "^room_\\d+$": {
-          "type": "object",
-          "required": ["desc", "exits"],
-          "properties": {
-            "desc": {
+      "player": {
+        "type": "object",
+        "required": ["room_id", "inventory", "flags"],
+        "properties": {
+          "room_id": {
+            "type": "string",
+            "pattern": "^room_\\d+$"
+          },
+          "inventory": {
+            "type": "array",
+            "items": {
               "type": "string"
+            }
+          },
+          "flags": {
+            "type": "object"
+          }
+        }
+      },
+      "rooms": {
+        "type": "object",
+        "patternProperties": {
+          "^room_\\d+$": {
+            "type": "object",
+            "required": ["desc", "exits"],
+            "properties": {
+              "desc": { "type": "string" },
+              "exits": {
+                "type": "object",
+                "properties": {
+                  "next": { "type": "string", "pattern": "^room_\\d+$" }
+                },
+                "additionalProperties": false
+              },
+              "items": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "npcs": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "scene": {
+                "type": "object",
+                "properties": {
+                  "bg": { "type": "string" },
+                  "walkmesh": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": { "type": "number" },
+                      "minItems": 4,
+                      "maxItems": 4
+                    }
+                  },
+                  "hotspots": {
+                    "type": "object",
+                    "patternProperties": {
+                      ".*": {
+                        "type": "object",
+                        "properties": {
+                          "rect": {
+                            "type": "array",
+                            "items": { "type": "number" },
+                            "minItems": 4,
+                            "maxItems": 4
+                          },
+                          "type": { "type": "string" }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "exits": {
+                    "type": "object",
+                    "patternProperties": {
+                      ".*": {
+                        "type": "object",
+                        "properties": {
+                          "rect": {
+                            "type": "array",
+                            "items": { "type": "number" },
+                            "minItems": 4,
+                            "maxItems": 4
+                          },
+                          "to": { "type": "string" }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
             },
-            "exits": {
-              "type": "object",
-              "properties": {
-                "next": {
-                  "type": "string",
-                  "pattern": "^room_\\d+$"
+            "additionalProperties": false
+          }
+        }
+      },
+      "npcs": {
+        "type": "object",
+        "patternProperties": {
+          "^[a-zA-Z_]+$": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "pattern": "^room_\\d+$"
+              },
+              "mood": { "type": "string" },
+              "flags": { "type": "object" },
+              "pos": {
+                "type": "array",
+                "items": { "type": "number" },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "sprite": { "type": "string" },
+              "history": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "role": { "type": "string" },
+                    "text": { "type": "string" }
+                  },
+                  "required": ["role", "text"],
+                  "additionalProperties": false
                 }
               }
             },
-            "items": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "npcs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "additionalProperties": false
           }
         }
-      }
-    },
-    "npcs": {
-      "type": "object",
-      "patternProperties": {
-        "^[a-zA-Z_]+$": {
-          "type": "object",
-          "properties": {
-            "location": {
-              "type": "string",
-              "pattern": "^room_\\d+$"
-            },
-            "mood": {
-              "type": "string"
-            },
-            "flags": {
-              "type": "object"
-            }
-          }
+      },
+      "flags": {
+        "type": "object"
+      },
+      "log": {
+        "type": "array",
+        "items": {
+          "type": "string"
         }
-      }
-    },
-    "flags": {
-      "type": "object"
-    },
-    "log": {
-      "type": "array",
-      "items": {
-        "type": "string"
       }
     }
-  },
-  "additionalProperties": false
-}
+  }

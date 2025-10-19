@@ -1,5 +1,5 @@
 class WorldsController < ApplicationController
-  ALLOWED_ACTIONS = %w[move look pickup inventory use].freeze
+  ALLOWED_ACTIONS = %w[move look pickup inventory use walk talk].freeze
   def create
     seed = params[:seed]
     difficulty = params[:difficulty] || "normal"
@@ -26,8 +26,6 @@ class WorldsController < ApplicationController
 
   def act
     world = World.find(params[:id])
-
-    # Strongly permit game_action and payload parameters
     permitted_params = params.permit(:game_action, payload: {})
     game_action = permitted_params[:game_action]
     payload = permitted_params[:payload] || {}
@@ -37,16 +35,50 @@ class WorldsController < ApplicationController
       return
     end
 
-    new_state, messages = WorldAction.apply!(world: world, action: game_action, payload: payload)
-    world.update!(game_state: new_state)
-
-    render json: WorldSerializer.render(world, messages: messages)
+    if game_action == "talk"
+      npc_id = payload["npc_id"]
+      player_text = payload["player_text"]
+      unless npc_id && player_text
+        render json: { error: "npc_id and player_text required for talk" }, status: 400
+        return
+      end
+      new_state, npc_text, messages = WorldSpeak.reply!(world: world, npc_id: npc_id, player_text: player_text)
+      world.update!(game_state: new_state)
+      effects = [ { "type" => "say", "npc_id" => npc_id, "text" => npc_text } ]
+      render json: WorldSerializer.render(world, messages: messages, effects: effects)
+    else
+      new_state, messages, effects = WorldAction.apply!(world: world, action: game_action, payload: payload)
+      world.update!(game_state: new_state)
+      render json: WorldSerializer.render(world, messages: messages, effects: effects)
+    end
   rescue ActiveRecord::RecordNotFound
     render json: { error: "not found" }, status: 404
   rescue WorldAction::Invalid => e
     render json: { error: e.message }, status: 400
   rescue => e
     render json: { error: "Unexpected error: #{e.message}" }, status: 500
+  end
+  def scene
+    world = World.find(params[:id])
+    player_room = world.game_state.dig("player", "room_id")
+    room = world.game_state.dig("rooms", player_room) || {}
+    scene = room["scene"]&.dup || {}
+    # Convert hotspots and exits from Hash to Array if present
+    if scene["hotspots"].is_a?(Hash)
+      scene["hotspots"] = scene["hotspots"].values
+    end
+    if scene["exits"].is_a?(Hash)
+      scene["exits"] = scene["exits"].values
+    end
+    bundle = {
+      "room_id" => player_room,
+      "scene" => scene,
+      "npcs" => world.game_state["npcs"],
+      "items" => room["items"]
+    }
+    render json: { world_id: world.id, bundle: bundle, messages: [] }
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "not found" }, status: 404
   end
 
   def resume

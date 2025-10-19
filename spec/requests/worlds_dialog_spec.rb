@@ -25,7 +25,7 @@ RSpec.describe "Worlds NPC dialog (multi-turn)", type: :request do
     expect(response).to have_http_status(:ok)
     expect(json["npc_text"]).to be_a(String)
     state = json["state"]
-    history = state.dig("npcs", "pirate_jeff", "dialog") || []
+  history = state.dig("npcs", "pirate_jeff", "history") || []
     expect(history.size).to be >= 2
     # Each entry should have role + text
     expect(history.last).to include("role", "text")
@@ -42,7 +42,7 @@ RSpec.describe "Worlds NPC dialog (multi-turn)", type: :request do
     end
     get "/worlds/#{wid}/state"
     state = json["state"]
-    history = state.dig("npcs", "pirate_jeff", "dialog") || []
+  history = state.dig("npcs", "pirate_jeff", "history") || []
     expect(history.length).to be <= 10
   end
 

@@ -26,11 +26,11 @@ RSpec.describe "Worlds /speak", type: :request do
     expect(response).to have_http_status(:ok)
     expect(json).to include("npc_text", "messages", "state")
     expect(json["npc_text"]).to be_a(String)
-  expect_json_schema!(json["state"])
+  expect_json_schema!(json["state"], "game_state")
 
     # If a patch was returned and applied, it should persist
     get "/worlds/#{wid}/state"
-  expect_json_schema!(json["state"])
+  expect_json_schema!(json["state"], "game_state")
   end
 
   it "404s for unknown NPC" do

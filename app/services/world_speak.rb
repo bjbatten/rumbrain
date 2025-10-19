@@ -16,14 +16,14 @@ class WorldSpeak
     end
   end
 
-  # Nil-safe dialog array setup
+  # Nil-safe history array setup
   state["npcs"] ||= {}
   state["npcs"][npc_id] ||= {}
-  state["npcs"][npc_id]["dialog"] ||= []
-  dialog = state["npcs"][npc_id]["dialog"]
+  state["npcs"][npc_id]["history"] ||= []
+  history = state["npcs"][npc_id]["history"]
 
   # Append player message
-  dialog << { "role" => "player", "text" => player_text }
+  history << { "role" => "player", "text" => player_text }
 
   # Deterministic stub NPC reply
   mood = state["npcs"][npc_id]["mood"] || "neutral"
@@ -35,10 +35,10 @@ class WorldSpeak
   end
 
   # Append NPC reply
-  dialog << { "role" => "npc", "text" => npc_text }
+  history << { "role" => "npc", "text" => npc_text }
 
-  # Trim dialog to last 10
-  dialog.shift while dialog.size > 10
+  # Trim history to last 10
+  history.shift while history.size > 10
 
   # Always append log entry
   state["log"] << "You spoke with #{npc_id}."

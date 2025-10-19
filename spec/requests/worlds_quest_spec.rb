@@ -42,7 +42,7 @@ RSpec.describe "Worlds quest flags", type: :request do
     post "/worlds/#{wid}/npc/pirate_jeff/speak", params: { player_text: "I found this" }
     expect(response).to have_http_status(:ok)
     new_state = json["state"]
-    expect_json_schema!(new_state)
+  expect_json_schema!(new_state, "game_state")
 
   # Expect a quest flag
   flags = new_state["flags"] || {}

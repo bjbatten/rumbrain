@@ -18,7 +18,7 @@ RSpec.describe "World flags & quest hooks", type: :request do
     expect(response).to have_http_status(:ok)
     flags = json["state"]["flags"] || {}
     expect(flags).to be_a(Hash)
-  expect_json_schema!(json["state"])
+  expect_json_schema!(json["state"], "game_state")
   end
 
   it "sets a world flag when using a key on a door, and NPC reacts to it" do
@@ -45,7 +45,7 @@ RSpec.describe "World flags & quest hooks", type: :request do
     # Use the item on 'door' to toggle a world flag
     post "/worlds/#{wid}/act", params: { game_action: "use", payload: { item_id: item, target: "door" } }
     expect(response).to have_http_status(:ok)
-  expect_json_schema!(json["state"])
+  expect_json_schema!(json["state"], "game_state")
 
     flags = json["state"]["flags"] || {}
     expect(flags["door_unlocked"]).to eq(true)
@@ -55,7 +55,7 @@ RSpec.describe "World flags & quest hooks", type: :request do
     expect(response).to have_http_status(:ok)
     expect(json["npc_text"]).to be_a(String)
     expect(json["npc_text"].downcase).to include("door") # minimal assertion
-  expect_json_schema!(json["state"])
+  expect_json_schema!(json["state"], "game_state")
   end
 
   it "does not set the flag if 'use' has no door target" do
