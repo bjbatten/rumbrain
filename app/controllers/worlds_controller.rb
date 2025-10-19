@@ -31,7 +31,7 @@ class WorldsController < ApplicationController
     game_action = permitted_params[:game_action]
     payload = permitted_params[:payload] || {}
 
-    unless %w[move look pickup].include?(game_action)
+    unless %w[move look pickup inventory].include?(game_action)
       render json: { error: "invalid action" }, status: 400
       return
     end

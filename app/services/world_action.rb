@@ -32,7 +32,7 @@ class WorldAction
       state["log"] << "You look around."
 
     when "pickup"
-      item = payload["item"]
+      item = payload["item_id"] || payload["item"]
       player_room = state["player"]["room_id"]
       room_items = state.dig("rooms", player_room, "items") || []
 
@@ -42,8 +42,17 @@ class WorldAction
 
       state["rooms"][player_room]["items"].delete(item)
       state["player"]["inventory"] << item
-      state["log"] << "You pick up #{item}."
-      messages << "You pick up #{item}."
+      state["log"] << "You picked up the #{item}."
+      messages << "You picked up the #{item}."
+
+    when "inventory"
+      inventory = state["player"]["inventory"] || []
+      if inventory.any?
+        messages << "Your inventory: #{inventory.join(', ')}"
+      else
+        messages << "Your inventory is empty."
+      end
+      # game_state remains unchanged for inventory
 
     else
       raise Invalid, "Invalid action: #{action}"
