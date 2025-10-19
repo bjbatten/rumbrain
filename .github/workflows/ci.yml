@@ -68,8 +68,10 @@ jobs:
       - name: Install dependencies
         run: bundle install --jobs 4 --retry 3
 
-      - name: Prepare database
-        run: bin/rails db:prepare
+      - name: Setup test database
+        run: |
+          bundle exec rails db:create RAILS_ENV=test
+          bundle exec rails db:migrate RAILS_ENV=test
 
       - name: Run RSpec tests
         run: bundle exec rspec --format documentation
