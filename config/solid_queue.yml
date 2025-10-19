@@ -1,2 +1,6 @@
 production:
   database: primary
+  dispatchers:
+    - polling_interval: 5
+  workers:
+    - queues: "*"
