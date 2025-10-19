@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   post "/worlds/:id/act", to: "worlds#act"
   post "/worlds/:id/point_click", to: "worlds#point_click"
   get  "/worlds/:id/scene", to: "worlds#scene"
+  # Serve game assets from public/assets via AssetsController
+  get "/assets/:name", to: "assets#show", as: :asset
   post "/worlds/:id/npc/:npc_id/speak", to: "worlds#speak"
   get  "/worlds/resume",      to: "worlds#resume"       # keeps existing query version
   get  "/resume/:code",       to: "worlds#resume_link", as: :resume_link
