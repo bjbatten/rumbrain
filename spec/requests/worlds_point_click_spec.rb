@@ -60,7 +60,16 @@ RSpec.describe "Worlds /point_click", type: :request do
     wid = create_world
     rid = player_room_id(wid)
     items = room(wid, rid)["items"] || []
-    skip "no items in room to pick up" if items.empty?
+    # Ensure there is at least one item to pick up for the test
+    if items.empty?
+      # Add a test item to the room via direct DB update
+      world = World.find(wid)
+      state = world.game_state
+      state["rooms"][rid]["items"] ||= []
+      state["rooms"][rid]["items"] << "test_item_1"
+      world.update!(game_state: state)
+      items = [ "test_item_1" ]
+    end
 
     item_id = items.first
     post "/worlds/#{wid}/point_click",

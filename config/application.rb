@@ -28,6 +28,17 @@ module Rumbrain
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Centralize load path additions here
+    config.autoload_paths  += %W[
+      #{config.root}/app/services
+      #{config.root}/app/serializers
+    ]
+
+    config.eager_load_paths += %W[
+      #{config.root}/app/services
+      #{config.root}/app/serializers
+    ]
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
