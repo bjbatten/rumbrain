@@ -1,4 +1,34 @@
 class WorldsController < ApplicationController
+  def point_click
+    world = World.find(params[:id])
+
+    permitted = params.permit(:operation, :text, target: [ :type, :id ])
+    operation = permitted[:operation].to_s
+    target    = (permitted[:target] || {}).to_h
+    text      = permitted[:text]
+
+    if operation == "talk"
+      new_state, messages, npc_text = PointClick.apply!(world: world, operation: operation, target: target, text: text)
+      world.update!(game_state: new_state)
+      render json: { state: new_state, messages: messages, npc_text: npc_text }, status: :ok
+    else
+      new_state, messages = PointClick.apply!(world: world, operation: operation, target: target, text: text)
+      world.update!(game_state: new_state)
+      render json: WorldSerializer.render(world, messages: messages), status: :ok
+    end
+
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "not found" }, status: :not_found
+  rescue PointClick::Invalid => e
+    # map "not found" to 404 to align with other endpoints, else 400
+    if e.message =~ /not found/i
+      render json: { error: e.message }, status: :not_found
+    else
+      render json: { error: e.message }, status: :bad_request
+    end
+  rescue WorldAction::Invalid, WorldSpeak::Invalid => e
+    render json: { error: e.message }, status: :bad_request
+  end
   ALLOWED_ACTIONS = %w[move look pickup inventory use walk talk].freeze
   def create
     seed = params[:seed]
