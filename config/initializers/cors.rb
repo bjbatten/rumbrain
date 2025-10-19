@@ -14,3 +14,13 @@
 #       methods: [:get, :post, :put, :patch, :delete, :options, :head]
 #   end
 # end
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins(*ENV.fetch("FRONTEND_ORIGINS", "").split(",").map(&:strip).reject(&:empty?)).presence || origins("*")
+    resource "*",
+      headers: :any,
+      methods: %i[get post options],
+      expose: %w[],
+      max_age: 600
+  end
+end
