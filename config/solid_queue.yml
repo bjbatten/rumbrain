@@ -1,6 +1,16 @@
 production:
   database: primary
   dispatchers:
-    - polling_interval: 5
+    - polling_interval: 10
   workers:
     - queues: "*"
+
+development:
+  database: primary
+  dispatchers:
+    - polling_interval: 10
+  workers:
+    - queues: "*"
+
+test:
+  database: primary
