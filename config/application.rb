@@ -28,6 +28,10 @@ module Rumbrain
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Ensure these arrays are mutable before engines append to them (CI was hitting FrozenError)
+    config.eager_load_paths = config.eager_load_paths.dup
+    config.autoload_paths   = config.autoload_paths.dup
+
     # Centralize load path additions here
     config.autoload_paths  += %W[
       #{config.root}/app/services
