@@ -2,25 +2,34 @@ class WorldSpeak
   class Invalid < StandardError; end
 
   def self.reply!(world:, npc_id:, player_text:)
-    state = JSON.parse(world.game_state.to_json)
+  state = JSON.parse(world.game_state.to_json)
 
-    # Call NarratorService for NPC response
-    narrator_response = NarratorService.reply(world: world, npc_id: npc_id, player_text: player_text)
-    npc_text = narrator_response["npc_text"]
-    state_patch = narrator_response["state_patch"] || {}
+  # Nil-safe dialog array setup
+  state["npcs"] ||= {}
+  state["npcs"][npc_id] ||= {}
+  state["npcs"][npc_id]["dialog"] ||= []
+  dialog = state["npcs"][npc_id]["dialog"]
 
-    # Apply state patch safely
-    apply_patch!(state, state_patch)
+  # Append player message
+  dialog << { "role" => "player", "text" => player_text }
 
-    # Always append log entry
-    state["log"] << "You spoke to #{npc_id}."
+  # Deterministic stub NPC reply
+  mood = state["npcs"][npc_id]["mood"] || "neutral"
+  npc_text = "(#{npc_id} in a #{mood} mood) You said: '#{player_text}'"
 
-    # Create message summary
-    first_words = npc_text.split.first(5).join(" ")
-    first_words += "..." if npc_text.split.length > 5
-    messages = [ "#{npc_id} says: #{first_words}" ]
+  # Append NPC reply
+  dialog << { "role" => "npc", "text" => npc_text }
 
-    [ state, npc_text, messages ]
+  # Trim dialog to last 10
+  dialog.shift while dialog.size > 10
+
+  # Always append log entry
+  state["log"] << "You spoke with #{npc_id}."
+
+  # Create message summary
+  messages = [ "You converse with #{npc_id}." ]
+
+  [ state, npc_text, messages ]
   end
 
   private
