@@ -37,7 +37,7 @@ class ProcGen
       }
     }
 
-    {
+    state = {
       "player" => {
         "room_id"  => "room_1",
         "inventory"=> [],
@@ -47,5 +47,7 @@ class ProcGen
       "npcs"  => npcs,
       "log"   => [ "World created." ]
     }
+    state["flags"] ||= {}
+    state
   end
 end

@@ -4,6 +4,18 @@ class WorldSpeak
   def self.reply!(world:, npc_id:, player_text:)
   state = JSON.parse(world.game_state.to_json)
 
+  quest_completed = false
+  # Check for quest completion: speaking to Pirate Jeff while holding a quest item
+  if npc_id == "pirate_jeff"
+    inventory = state.dig("player", "inventory") || []
+    quest_items = %w[item_1 item_2]
+    if (inventory & quest_items).any?
+      state["flags"] ||= {}
+      state["flags"]["quest_pirate_intro"] = "completed"
+      quest_completed = true
+    end
+  end
+
   # Nil-safe dialog array setup
   state["npcs"] ||= {}
   state["npcs"][npc_id] ||= {}
@@ -15,7 +27,12 @@ class WorldSpeak
 
   # Deterministic stub NPC reply
   mood = state["npcs"][npc_id]["mood"] || "neutral"
-  npc_text = "(#{npc_id} in a #{mood} mood) You said: '#{player_text}'"
+  unlocked = state.dig("flags", "door_unlocked")
+  if unlocked
+    npc_text = "Arr, I hear the door’s open now."
+  else
+    npc_text = "(#{npc_id} in a #{mood} mood) You said: '#{player_text}'"
+  end
 
   # Append NPC reply
   dialog << { "role" => "npc", "text" => npc_text }
@@ -28,6 +45,7 @@ class WorldSpeak
 
   # Create message summary
   messages = [ "You converse with #{npc_id}." ]
+  messages << "Quest completed!" if quest_completed
 
   [ state, npc_text, messages ]
   end

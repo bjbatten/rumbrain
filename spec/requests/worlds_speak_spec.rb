@@ -1,14 +1,8 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "json_schemer"
-
 def schema_path(name); Rails.root.join("docs", "schemas", "#{name}.schema.json"); end
-def load_schema(name); JSONSchemer.schema(Pathname.new(schema_path(name))); end
-def expect_json_schema!(payload, schema_name)
-  errors = load_schema(schema_name).validate(payload).to_a
-  expect(errors).to be_empty, "Schema #{schema_name} errors:\n#{errors.map(&:to_h)}"
-end
+require "json_schemer"
 
 RSpec.describe "Worlds /speak", type: :request do
   def json; JSON.parse(response.body); end
@@ -33,11 +27,11 @@ RSpec.describe "Worlds /speak", type: :request do
     expect(response).to have_http_status(:ok)
     expect(json).to include("npc_text", "messages", "state")
     expect(json["npc_text"]).to be_a(String)
-    expect_json_schema!(json["state"], "game_state")
+  expect_json_schema!(json["state"])
 
     # If a patch was returned and applied, it should persist
     get "/worlds/#{wid}/state"
-    expect_json_schema!(json["state"], "game_state")
+  expect_json_schema!(json["state"])
   end
 
   it "404s for unknown NPC" do

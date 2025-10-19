@@ -3,22 +3,7 @@
 require "rails_helper"
 require "json_schemer"
 
-# ---------------------------------------------------------------------------
-# JSON schema helper
-# ---------------------------------------------------------------------------
-def schema_path(name)
-  Rails.root.join("docs", "schemas", "#{name}.schema.json")
-end
 
-def load_schema(name)
-  JSONSchemer.schema(Pathname.new(schema_path(name)))
-end
-
-def expect_json_schema!(payload, schema_name)
-  schema = load_schema(schema_name)
-  errors = schema.validate(payload).to_a
-  expect(errors).to be_empty, "JSON schema validation failed for #{schema_name}:\n#{errors.map(&:to_h)}"
-end
 
 RSpec.describe "Worlds", type: :request do
   def json
@@ -47,7 +32,7 @@ RSpec.describe "Worlds", type: :request do
 
       game_state = json["state"]
       expect_game_state_shape!(game_state)
-      expect_json_schema!(game_state, "game_state")
+  expect_json_schema!(game_state)
     end
   end
 
@@ -60,7 +45,7 @@ RSpec.describe "Worlds", type: :request do
       expect(response).to have_http_status(:ok)
       expect_world_response!(json)
       expect(json["world_id"]).to eq(world_id)
-      expect_json_schema!(json["state"], "game_state")
+  expect_json_schema!(json["state"])
     end
   end
 

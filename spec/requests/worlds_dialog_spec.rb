@@ -1,14 +1,8 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "json_schemer"
-
 def schema_path(name); Rails.root.join("docs", "schemas", "#{name}.schema.json"); end
-def load_schema(name); JSONSchemer.schema(Pathname.new(schema_path(name))); end
-def expect_json_schema!(payload, schema_name)
-  errors = load_schema(schema_name).validate(payload).to_a
-  expect(errors).to be_empty, "Schema #{schema_name} errors:\n#{errors.map(&:to_h)}"
-end
+require "json_schemer"
 
 RSpec.describe "Worlds NPC dialog (multi-turn)", type: :request do
   def json; JSON.parse(response.body); end

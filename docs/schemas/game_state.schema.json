@@ -5,7 +5,7 @@
   "description": "Schema for the game state object in rumbrain",
   "required": ["player", "rooms", "npcs", "log"],
   "properties": {
-    "player": {
+  "player": {
       "type": "object",
       "required": ["room_id", "inventory", "flags"],
       "properties": {
@@ -78,6 +78,9 @@
           }
         }
       }
+    },
+    "flags": {
+      "type": "object"
     },
     "log": {
       "type": "array",

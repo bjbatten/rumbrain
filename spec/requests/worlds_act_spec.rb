@@ -1,14 +1,8 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "json_schemer"
-
 def schema_path(name); Rails.root.join("docs", "schemas", "#{name}.schema.json"); end
-def load_schema(name); JSONSchemer.schema(Pathname.new(schema_path(name))); end
-def expect_json_schema!(payload, schema_name)
-  errors = load_schema(schema_name).validate(payload).to_a
-  expect(errors).to be_empty, "Schema #{schema_name} errors:\n#{errors.map(&:to_h)}"
-end
+require "json_schemer"
 
 RSpec.describe "Worlds /act", type: :request do
   def json; JSON.parse(response.body); end
@@ -29,7 +23,7 @@ RSpec.describe "Worlds /act", type: :request do
     expect(response).to have_http_status(:ok)
     expect(json).to include("world_id", "state", "messages")
     expect(json["state"]["player"]["room_id"]).to eq(next_room)
-    expect_json_schema!(json["state"], "game_state")
+  expect_json_schema!(json["state"])
   end
 
   it "returns info about the current room (POST /act look)" do
@@ -41,7 +35,7 @@ RSpec.describe "Worlds /act", type: :request do
     post "/worlds/#{wid}/act", params: { game_action: "look", payload: {} }
     expect(response).to have_http_status(:ok)
     expect(json["messages"].join(" ")).to include(desc)
-    expect_json_schema!(json["state"], "game_state")
+  expect_json_schema!(json["state"])
   end
 
   it "picks up an item present in the room (POST /act pickup)" do
@@ -75,7 +69,7 @@ RSpec.describe "Worlds /act", type: :request do
     new_state = json["state"]
     expect(new_state["player"]["inventory"]).to include(item)
     expect(new_state["rooms"][room_with_item]["items"]).not_to include(item)
-    expect_json_schema!(new_state, "game_state")
+  expect_json_schema!(new_state)
   end
 
   it "rejects invalid move direction" do
